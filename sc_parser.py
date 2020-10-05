@@ -15,10 +15,37 @@ class Node(Equality):
         self.children = []
 
     def __str__(self):
-        return f'<Node: data={self.data}>'
+        return f'<Node: data = {self.data}>'
 
     def __repr__(self):
         return str(self)
 
     def add_child(self, child):
         self.children.append(child)
+
+def start_parse(inp):
+    token_iter = iter(inp)
+    try:
+        current_token = next(token_iter)
+        if current_token.data == '(':
+            ast = new_exp(token_iter)
+        else:
+            ast = Node(current_token)
+    except StopIteration:
+        raise Exception("Parser received no input.")  
+    return ast
+
+def new_exp(token_iter):
+    exp = Node(next(token_iter))
+    while True:
+        try:
+            current_token = next(token_iter)
+            if current_token.data == '(':
+                exp.add_child(new_exp(token_iter))
+            elif current_token.data == ')':
+                break
+            else:
+                exp.add_child(Node(current_token))
+        except StopIteration:
+            raise Exception("Incomplete expression.")
+    return exp
