@@ -1,6 +1,21 @@
 import sys
 import re
 
+RESERVED = 'RESERVED'
+INT = 'INT'
+
+token_exprs = [
+    (r'[ \n\t]+',              None),
+    (r'#[^\n]*',               None),
+    (r'\(',                    RESERVED),
+    (r'\)',                    RESERVED),
+    (r'\+',                    RESERVED),
+    (r'-',                     RESERVED),
+    (r'\*',                    RESERVED),
+    (r'/',                     RESERVED),
+    (r'[0-9]+',                INT),
+]
+
 class Token:
     def __init__(self, data, tokenType):
         self.data = data
@@ -34,3 +49,6 @@ def lex(characters, token_exprs):
         else:
             pos = match.end(0)
     return tokens
+
+def sc_lex(characters):
+    return lex(characters, token_exprs)
