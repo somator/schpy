@@ -3,6 +3,7 @@ import re
 
 RESERVED = 'RESERVED'
 INT = 'INT'
+SYMBOL = 'SYMBOL'
 
 token_exprs = [
     (r'[ \n\t]+',              None),
@@ -14,6 +15,7 @@ token_exprs = [
     (r'\*',                    RESERVED),
     (r'/',                     RESERVED),
     (r'[0-9]+',                INT),
+    (r'[A-Za-z][A-Za-z0-9_]*', SYMBOL),
 ]
 
 class Token:
