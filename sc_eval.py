@@ -10,7 +10,14 @@ def eval_exp(exp, env):
         if len(exp.children) == 0:
             return env[exp.data]
         else: # if symbol is name of a function and not a variable
-            pass
+            local_env = {}
+            (variables, definition) = env[exp.data]
+            for i in range(len(variables)):
+                argument = exp.children[i]
+                for child in definition.children:
+                    if child.data == variables[i].data:
+                        local_env[child.data] = eval_exp(argument, env)
+            return eval_exp(definition, local_env)            
     elif exp.data == '*':
         return math.prod([eval_exp(sub_exp, env) for sub_exp in exp.children])
     elif exp.data == '+':
@@ -25,7 +32,7 @@ def eval_exp(exp, env):
         if len(exp.children[0].children) == 0:
             global_env[new_exp_var.data] = eval_exp(new_exp_val, env)
         else:
-            pass
+            global_env[new_exp_var.data] = (new_exp_var.children, new_exp_val)
     else:
         raise Exception("Unknown expression type: " + exp.data)
 
