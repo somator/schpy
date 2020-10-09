@@ -15,7 +15,7 @@ class Node(Equality):
         self.children = []
 
     def __str__(self):
-        return f'<Node: data = {self.data}>'
+        return f'<Node: data = \'{self.data}\'>'
 
     def __repr__(self):
         return str(self)
@@ -40,6 +40,9 @@ def start_parse(inp):
 
 def new_exp(token_iter):
     exp = Node(next(token_iter))
+    if exp.data == '(':
+        exp = Node(Token('', 'COMPOSITE'))
+        exp.add_child(new_exp(token_iter))
     while True:
         try:
             current_token = next(token_iter)

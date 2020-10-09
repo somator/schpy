@@ -15,21 +15,27 @@ def eval_exp(exp, env):
             (variables, definition) = env[exp.data]
             for i in range(len(variables)):
                 argument = exp.children[i]
-                for child in definition.children:
-                    if child.data == variables[i].data:
-                        local_env[child.data] = eval_exp(argument, env)
-            return eval_exp(definition, local_env)            
+                vdata = variables[i].data
+                local_env = local_assignment(argument, definition, vdata, local_env, env)
+            # local_env.update(env)
+            return eval_exp(definition, local_env)           
     elif exp.data == '*':
         return math.prod([eval_exp(sub_exp, env) for sub_exp in exp.children])
     elif exp.data == '+':
         return sum([eval_exp(sub_exp, env) for sub_exp in exp.children])
     elif exp.data == '-':
-        return eval_exp(exp.children[0], env) - sum([eval_exp(sub_exp, env) for sub_exp in exp.children[1:]])
+        if len(exp.children) >= 2:
+            return eval_exp(exp.children[0], env) - sum([eval_exp(sub_exp, env) for sub_exp in exp.children[1:]])
+        else:
+            return - eval_exp(exp.children[0], env)
     elif exp.data == '/':
         return eval_exp(exp.children[0], env) / math.prod([eval_exp(sub_exp, env) for sub_exp in exp.children[1:]])
     elif exp.data in ['<=', '>=', '<', '>']:
         (op, arg1, arg2) = (exp.data, eval_exp(exp.children[0], env), eval_exp(exp.children[1], env))
         return eval(str(arg1) + op + str(arg2))
+    elif exp.data == '=':
+        (arg1, arg2) = eval_exp(exp.children[0], env), eval_exp(exp.children[1], env)
+        return eval(str(arg1) + '==' + str(arg2))
     elif exp.data == 'define':
         new_exp_var = exp.children[0]
         new_exp_val = exp.children[1]
@@ -45,8 +51,19 @@ def eval_exp(exp, env):
             return eval_exp(then_exp, env)
         else:
             return eval_exp(else_exp, env)
+    elif exp.data == 'cond':
+        for child in exp.children:
+            if eval_exp(child.children[0], env):
+                return eval_exp(child.children[1], env)
     else:
         raise Exception("Unknown expression type: " + exp.data)
 
 def sc_eval(exp):
     return eval_exp(exp, global_env)
+
+def local_assignment(argument, definition, vdata, local_env, env):
+    for child in definition.children:
+        if child.data == vdata:
+            local_env[child.data] = eval_exp(argument, env)
+        local_env = local_assignment(argument, child, vdata, local_env, env)
+    return local_env
