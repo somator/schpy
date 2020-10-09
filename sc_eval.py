@@ -1,5 +1,6 @@
 import math
 from sc_parser import *
+from sc_lexer import *
 
 global_env = {}
 
@@ -7,7 +8,7 @@ def eval_exp(exp, env):
     if exp.type == 'INT':
         return int(exp.data)
     elif exp.type == 'SYMBOL':
-        if len(exp.children) == 0:
+        if exp.is_atomic():
             return env[exp.data]
         else: # if symbol is name of a function and not a variable
             local_env = {}
@@ -29,7 +30,7 @@ def eval_exp(exp, env):
     elif exp.data == 'define':
         new_exp_var = exp.children[0]
         new_exp_val = exp.children[1]
-        if len(exp.children[0].children) == 0:
+        if exp.children[0].is_atomic():
             global_env[new_exp_var.data] = eval_exp(new_exp_val, env)
         else:
             global_env[new_exp_var.data] = (new_exp_var.children, new_exp_val)

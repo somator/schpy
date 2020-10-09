@@ -23,6 +23,9 @@ class Node(Equality):
     def add_child(self, child):
         self.children.append(child)
 
+    def is_atomic(self):
+        return len(self.children) == 0
+
 def start_parse(inp):
     token_iter = iter(inp)
     try:
