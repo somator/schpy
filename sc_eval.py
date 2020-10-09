@@ -16,6 +16,13 @@ def eval_exp(exp, env):
         return eval_exp(exp.children[0], env) - sum([eval_exp(sub_exp, env) for sub_exp in exp.children[1:]])
     elif exp.data == '/':
         return eval_exp(exp.children[0], env) / math.prod([eval_exp(sub_exp, env) for sub_exp in exp.children[1:]])
+    elif exp.data == 'define':
+        new_exp_var = exp.children[0]
+        new_exp_val = exp.children[1]
+        if len(exp.children[0].children) == 0:
+            global_env[new_exp_var.data] = eval_exp(new_exp_val, env)
+        else:
+            pass
     else:
         raise Exception("Unknown expression type: " + exp.data)
 
