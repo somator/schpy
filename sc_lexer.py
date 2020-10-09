@@ -11,7 +11,6 @@ token_exprs = [
     (r'\(',                    RESERVED),
     (r'\)',                    RESERVED),
     (r'\+',                    RESERVED),
-    (r'-',                     RESERVED),
     (r'\*',                    RESERVED),
     (r'/',                     RESERVED),
     (r'<=',                    RESERVED),
@@ -22,7 +21,8 @@ token_exprs = [
     (r'define',                RESERVED),
     (r'if',                    RESERVED),
     (r'cond',                  RESERVED),
-    (r'[0-9]+',                INT),
+    (r'-?[0-9]+',              INT),
+    (r'-',                     RESERVED),
     (r'[A-Za-z][A-Za-z0-9_]*', SYMBOL),
 ]
 
