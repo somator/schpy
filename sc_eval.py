@@ -7,7 +7,10 @@ def eval_exp(exp, env):
     if exp.type == 'INT':
         return int(exp.data)
     elif exp.type == 'SYMBOL':
-        return env[exp.data]
+        if len(exp.children) == 0:
+            return env[exp.data]
+        else: # if symbol is name of a function and not a variable
+            pass
     elif exp.data == '*':
         return math.prod([eval_exp(sub_exp, env) for sub_exp in exp.children])
     elif exp.data == '+':
