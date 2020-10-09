@@ -34,6 +34,14 @@ def eval_exp(exp, env):
             global_env[new_exp_var.data] = eval_exp(new_exp_val, env)
         else:
             global_env[new_exp_var.data] = (new_exp_var.children, new_exp_val)
+    elif exp.data == 'if':
+        test_exp = exp.children[0]
+        then_exp = exp.children[1]
+        else_exp = exp.children[2]
+        if eval_exp(test_exp, env):
+            return eval_exp(then_exp, env)
+        else:
+            return eval_exp(else_exp, env)
     else:
         raise Exception("Unknown expression type: " + exp.data)
 
