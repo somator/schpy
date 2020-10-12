@@ -39,7 +39,7 @@ def eval_exp(exp, env):
     elif exp.data == 'define':
         new_exp_var = exp.children[0]
         new_exp_val = exp.children[1]
-        if exp.children[0].is_atomic():
+        if new_exp_var.is_atomic():
             global_env[new_exp_var.data] = eval_exp(new_exp_val, env)
         else:
             global_env[new_exp_var.data] = (new_exp_var.children, new_exp_val)
@@ -51,6 +51,11 @@ def eval_exp(exp, env):
             return eval_exp(then_exp, env)
         else:
             return eval_exp(else_exp, env)
+    elif exp.data == 'begin':
+        for child in exp.children[:-1]:
+            eval_exp(child, env)
+        tail_index = len(exp.children) - 1
+        return eval_exp(exp.children[tail_index], env)
     elif exp.data == 'cond':
         for child in exp.children:
             if eval_exp(child.children[0], env):

@@ -20,6 +20,7 @@ token_exprs = [
     (r'=',                     RESERVED),
     (r'define',                RESERVED),
     (r'if',                    RESERVED),
+    (r'begin',                 RESERVED),
     (r'cond',                  RESERVED),
     (r'-?[0-9]+',              INT),
     (r'-',                     RESERVED),
