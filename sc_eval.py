@@ -8,6 +8,8 @@ global_env = {}
 def eval_exp(exp, env):
     if exp.type == 'INT':
         return int(exp.data)
+    elif exp.type == 'FLOAT':
+        return float(exp.data)
     elif exp.type == 'SYMBOL':
         if exp.is_atomic():
             return env[exp.data]
@@ -88,3 +90,10 @@ def local_assignment(param_val, body, param, local_env, env):
             local_env[child.data] = eval_exp(param_val, env)
         local_env = local_assignment(param_val, child, param, local_env, env)
     return local_env
+
+def sc(input):
+    # lex, parse, and evaluate the input
+    result = eval_exp(start_parse(sc_lex(input)), global_env)
+    return result
+
+print(sc('(* 3.14 2)'))

@@ -2,6 +2,7 @@ import sys
 import re
 
 RESERVED = 'RESERVED'
+FLOAT = 'FLOAT'
 INT = 'INT'
 SYMBOL = 'SYMBOL'
 
@@ -23,6 +24,7 @@ token_exprs = [
     (r'lambda',                RESERVED),
     (r'begin',                 RESERVED),
     (r'cond',                  RESERVED),
+    (r'-?[0-9]+\.[0-9]+',      FLOAT),
     (r'-?[0-9]+',              INT),
     (r'-',                     RESERVED),
     (r'[A-Za-z][A-Za-z0-9_]*', SYMBOL),
