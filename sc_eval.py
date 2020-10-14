@@ -2,6 +2,7 @@ import math
 from sc_parser import *
 from sc_lexer import *
 
+
 global_env = {}
 
 def eval_exp(exp, env):
@@ -12,13 +13,15 @@ def eval_exp(exp, env):
             return env[exp.data]
         else: # if symbol is name of a function and not a variable
             local_env = {}
-            (variables, definition) = env[exp.data]
-            for i in range(len(variables)):
-                argument = exp.children[i]
-                vdata = variables[i].data
-                local_env = local_assignment(argument, definition, vdata, local_env, env)
+            (params, body) = env[exp.data]
+            for i in range(len(params)):
+                param_val = exp.children[i]
+                param = params[i].data
+                local_env = local_assignment(param_val, body, param, local_env, env)
             # local_env.update(env)
-            return eval_exp(definition, local_env)           
+            return eval_exp(body, local_env)
+    elif exp.type == 'COMPOSITE':
+        return eval_exp(exp.children[0], env)           
     elif exp.data == '*':
         return math.prod([eval_exp(sub_exp, env) for sub_exp in exp.children])
     elif exp.data == '+':
@@ -51,6 +54,19 @@ def eval_exp(exp, env):
             return eval_exp(then_exp, env)
         else:
             return eval_exp(else_exp, env)
+    elif exp.data == 'lambda':
+        params_head = exp.children[0]
+        params = [params_head] + params_head.children
+        body = exp.children[1]
+        local_env = {}
+        siblings = exp.parent.children
+        args = siblings[siblings.index(exp) + 1:]
+        for i in range(len(params)):
+            param_val = args[i]
+            param = params[i].data
+            local_env = local_assignment(param_val, body, param, local_env, env)
+        local_env.update(env)
+        return eval_exp(body, local_env)
     elif exp.data == 'begin':
         for child in exp.children[:-1]:
             eval_exp(child, env)
@@ -66,9 +82,9 @@ def eval_exp(exp, env):
 def sc_eval(exp):
     return eval_exp(exp, global_env)
 
-def local_assignment(argument, definition, vdata, local_env, env):
-    for child in definition.children:
-        if child.data == vdata:
-            local_env[child.data] = eval_exp(argument, env)
-        local_env = local_assignment(argument, child, vdata, local_env, env)
+def local_assignment(param_val, body, param, local_env, env):
+    for child in body.children:
+        if child.data == param:
+            local_env[child.data] = eval_exp(param_val, env)
+        local_env = local_assignment(param_val, child, param, local_env, env)
     return local_env

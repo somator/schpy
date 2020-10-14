@@ -13,6 +13,7 @@ class Node(Equality):
         self.type = token.tokenType
         self.data = token.data
         self.children = []
+        self.parent = None
 
     def __str__(self):
         return f'<Node: data = \'{self.data}\'>'
@@ -22,6 +23,7 @@ class Node(Equality):
 
     def add_child(self, child):
         self.children.append(child)
+        child.parent = self
 
     def is_atomic(self):
         return len(self.children) == 0
