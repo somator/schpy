@@ -8,6 +8,10 @@ class Equality:
     def __ne__(self, other):
         return not self.__eq__(other)
 
+# The AST (abstract syntax tree) is comprised of nodes containing 2 strings, representing type
+# and data, a list of children nodes, and an optional parent node (used for lambda evaluation).
+# Nodes can be either atomic, meaning they contain no children/arguments (i.e. numbers or variables), 
+# or list nodes, which require more in-depth evaluation.
 class Node(Equality):
     def __init__(self, **kwargs):
         self.type = ''
@@ -32,6 +36,8 @@ class Node(Equality):
     def is_atomic(self):
         return len(self.children) == 0
 
+# Takes a tokenized input and returns an AST. If the first token is not a left parenthesis, the
+# AST should be an atom, and otherwise, a list.
 def start_parse(inp):
     token_iter = iter(inp)
     try:
@@ -44,6 +50,9 @@ def start_parse(inp):
         raise Exception("Parser received no input.")  
     return ast
 
+# Generates a list node and assigns it children according to each token in the iterator, recurring
+# whenever the next token is a left parenthesis, and finally returning the list node when the next
+# token is a right parenthesis.
 def new_exp(token_iter):
     exp = Node(type='LIST')
     head = next(token_iter)
