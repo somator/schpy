@@ -9,14 +9,18 @@ class Equality:
         return not self.__eq__(other)
 
 class Node(Equality):
-    def __init__(self, token):
-        self.type = token.tokenType
-        self.data = token.data
+    def __init__(self, **kwargs):
+        self.type = ''
+        self.data = ''
+        self.__dict__.update(kwargs)
         self.children = []
         self.parent = None
 
     def __str__(self):
-        return f'<Node: data = \'{self.data}\'>'
+        if self.type != 'LIST':
+            return f'<Node: data = \'{self.data}\'>'
+        else:
+            return str(self.children)
 
     def __repr__(self):
         return str(self)
@@ -35,16 +39,18 @@ def start_parse(inp):
         if current_token.data == '(':
             ast = new_exp(token_iter)
         else:
-            ast = Node(current_token)
+            ast = Node(type=current_token.tokenType, data=current_token.data)
     except StopIteration:
         raise Exception("Parser received no input.")  
     return ast
 
 def new_exp(token_iter):
-    exp = Node(next(token_iter))
-    if exp.data == '(':
-        exp = Node(Token('', 'COMPOSITE'))
+    exp = Node(type='LIST')
+    head = next(token_iter)
+    if head.data == '(':
         exp.add_child(new_exp(token_iter))
+    else:
+        exp.add_child(Node(type=head.tokenType, data=head.data))
     while True:
         try:
             current_token = next(token_iter)
@@ -53,7 +59,7 @@ def new_exp(token_iter):
             elif current_token.data == ')':
                 break
             else:
-                exp.add_child(Node(current_token))
+                exp.add_child(Node(type=current_token.tokenType, data=current_token.data))
         except StopIteration:
             raise Exception("Incomplete expression.")
     return exp
