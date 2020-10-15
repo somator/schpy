@@ -48,7 +48,7 @@ class Evaluator:
                 for i in range(len(params)):
                     param_val = operands[i]
                     param = params[i].data
-                    local_env = self.local_assignment(param_val, body, param, local_env, env)
+                    local_env[param] = self.eval_exp(param_val, env)
                 # local_env.update(env)
                 return self.eval_exp(body, local_env)
             else:
@@ -123,7 +123,7 @@ class Evaluator:
         for i in range(len(params)):
             param_val = args[i]
             param = params[i].data
-            local_env = self.local_assignment(param_val, body, param, local_env, env)
+            local_env[param] = self.eval_exp(param_val, env)
         local_env.update(env)
         return self.eval_exp(body, local_env)
 
@@ -134,20 +134,12 @@ class Evaluator:
         tail_index = len(exp.children) - 1
         return self.eval_exp(exp.children[tail_index], env)
 
+    # evaluate the first item of each operand pair sequentially. If true, return the
+    # evaluation of the second item.
     def eval_cond(self, exp, env):
         for child in exp.children[1:]:
             if self.eval_exp(child.children[0], env):
                 return self.eval_exp(child.children[1], env)
-
-    # recursively look for instances of a parameter name within the body, assign
-    # it the corresponding parameter value within the local environment, and return
-    # the local environment.
-    def local_assignment(self, param_val, body, param, local_env, env):
-        for child in body.children:
-            if child.data == param:
-                local_env[child.data] = self.eval_exp(param_val, env)
-            local_env = self.local_assignment(param_val, child, param, local_env, env)
-        return local_env
 
     # evaluate an expression using the global environment.
     def sc_eval(self, exp):
