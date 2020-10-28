@@ -22,6 +22,7 @@ class Evaluator:
             'lambda' : self.eval_lambda,
             'begin' : self.eval_begin,
             'cond' : self.eval_cond,
+            'quote' : self.eval_quote,
         }
 
     # The primary evaluation method
@@ -33,6 +34,8 @@ class Evaluator:
                 return float(exp.data)
             elif exp.type == 'SYMBOL':
                 return env[exp.data]
+            elif exp.type == 'QUOTE':
+                return exp.data[1:]
             else:
                 raise Exception('Atomic expression could not be evaluated')
         elif exp.type == 'LIST':
@@ -56,6 +59,10 @@ class Evaluator:
         else:
             raise Exception('Unknown expression type: ' + exp.data)
 
+    # return the operand's data directly
+    def eval_quote(self, exp, env):
+        return exp.children[1].data
+    
     # return the product of the operands of a list expression.
     def eval_prod(self, exp, env):
         return math.prod([self.eval_exp(sub_exp, env) for sub_exp in exp.children[1:]])

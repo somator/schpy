@@ -5,29 +5,32 @@ RESERVED = 'RESERVED'
 FLOAT = 'FLOAT'
 INT = 'INT'
 SYMBOL = 'SYMBOL'
+QUOTE = 'QUOTE'
 
 token_exprs = [
-    (r'[ \n\t]+',              None),
-    (r'#[^\n]*',               None),
-    (r'\(',                    RESERVED),
-    (r'\)',                    RESERVED),
-    (r'\+',                    RESERVED),
-    (r'\*',                    RESERVED),
-    (r'/',                     RESERVED),
-    (r'<=',                    RESERVED),
-    (r'>=',                    RESERVED),
-    (r'<',                     RESERVED),
-    (r'>',                     RESERVED),
-    (r'=',                     RESERVED),
-    (r'define',                RESERVED),
-    (r'if',                    RESERVED),
-    (r'lambda',                RESERVED),
-    (r'begin',                 RESERVED),
-    (r'cond',                  RESERVED),
-    (r'-?[0-9]+\.[0-9]+',      FLOAT),
-    (r'-?[0-9]+',              INT),
-    (r'-',                     RESERVED),
-    (r'[A-Za-z][A-Za-z0-9_]*', SYMBOL),
+    (r'[ \n\t]+',                   None),
+    (r'#[^\n]*',                    None),
+    (r'\(',                         RESERVED),
+    (r'\)',                         RESERVED),
+    (r'\+',                         RESERVED),
+    (r'\*',                         RESERVED),
+    (r'/',                          RESERVED),
+    (r'<=',                         RESERVED),
+    (r'>=',                         RESERVED),
+    (r'<',                          RESERVED),
+    (r'>',                          RESERVED),
+    (r'=',                          RESERVED),
+    (r'define',                     RESERVED),
+    (r'if',                         RESERVED),
+    (r'lambda',                     RESERVED),
+    (r'begin',                      RESERVED),
+    (r'cond',                       RESERVED),
+    (r'quote',                      QUOTE),
+    (r'\'[A-Za-z][A-Za-z0-9_]*',    QUOTE),
+    (r'-?[0-9]+\.[0-9]+',           FLOAT),
+    (r'-?[0-9]+',                   INT),
+    (r'-',                          RESERVED),
+    (r'[A-Za-z][A-Za-z0-9_]*',      SYMBOL),
 ]
 
 class Token:
